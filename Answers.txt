@@ -1,0 +1,18 @@
+Q1: 
+•	Since starting a new process involves accessing privileged resources and carrying out kernel-only actions, the operating system must typically enter kernel mode.
+ The operating system must assign memory, create a process control block, and create a virtual address space for the process before it can begin. Some activities can't be carried out in user mode because they need privileged access to the system hardware.
+ In order to make sure the process has the permissions and resources it needs to run, the kernel must also carry out checks and validations. Moreover, privileged access to system resources is needed for this.
+Hence, in order to complete the essential activities when beginning a new process, the operating system must normally transition to kernel mode.
+
+•	The operating system normally does not have to enter kernel mode in order to multiply two floating-point integers that are kept in memory by an application. 
+The processor of the application can complete this task in user mode. The CPU's arithmetic logic unit (ALU), a hardware component created to do such operations, can conduct the fundamental arithmetic operation of floating-point multiplication.
+ As the ALU is a component of the CPU and runs in user mode, it may carry out floating-point multiplication operations without needing privileged access to the system.
+  However, the operating system may need to step in and transition to kernel mode to enforce security and protection mechanisms if the program tries to access memory that it is not authorized to access or carries out other privileged operations.
+
+Arithmetic procedures like floating-point multiplication can typically be completed wholly in user mode, but more complicated processes that demand privileged access or interaction with system resources may necessitate switching the operating system to kernel mode.
+
+•	The operating system must typically transition to kernel mode in order to write the results of the multiplication to a temporary log file on disk since this operation involves accessing privileged system resources that are inaccessible in user mode.
+ An application must communicate with the file system, which is controlled by the kernel of the operating system, in order to write data to a file on disk. Requesting access to disk I/O operations, 
+setting up the required data structures to access the file system, and actually writing to the disk are all part of this interaction. All of these activities call for privileged access, which the kernel alone can grant to system resources.
+ Writing to a file on a disk can also have security repercussions because it might include creating or changing system files that are essential to the system's functionality. Because of this, the operating system may impose extra security checks and permissions that need access at the kernel level.
+

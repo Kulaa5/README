@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <time.h>
+#include <sys/utsname.h>
+
+#define MAX_PATH_LENGTH 1024
+
+void ls(char *path, int show_hidden) {
+    DIR *dir;
+    struct dirent *ent;
+
+    if ((dir = opendir(path)) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            // Skip hidden files if show_hidden is false
+            if (!show_hidden && ent->d_name[0] == '.') {
+                continue;
+            }
+            printf("%s\n", ent->d_name);
+        }
+        closedir(dir);
+    } else {
+        perror("ls");
+    }
+}
+
+void mkdir(char *path) {
+    if (mkdir(path, 0777) == -1) {
+        perror("mkdir");
+    }
+}
+
+void uptime() {
+    struct timespec ts;
+    if (clock_gettime(CLOCK_BOOTTIME, &ts) == -1) {
+        perror("clock_gettime");
+    } else {
+        printf("Uptime: %ld seconds\n", ts.tv_sec);
+    }
+}
+
+void sl(int duration) {
+    printf("Sorry, I cannot implement sl in a text-based shell.\n");
+    printf("Please install the program and run it in a graphical environment.\n");
+}
+
+int main() {
+    char command[MAX_PATH_LENGTH];
+    char prompt[MAX_PATH_LENGTH];
+    int show_hidden = 0;
+    int pipe_to_file = 0;
+    char output_file[MAX_PATH_LENGTH];
+    output_file[0] = '\0';
+
+    // Get the machine name and user name
+    char machine_name[MAX_PATH_LENGTH];
+    char user_name[MAX_PATH_LENGTH];
+    struct utsname uname_data;
+    uname(&uname_data);
+    strcpy(machine_name, uname_data.nodename);
+    strcpy(user_name, getlogin());
+
+    // Set the prompt format
+    snprintf(prompt, MAX_PATH_LENGTH, "%s@%s:~$ ", user_name, machine_name);
+
+    while (1) {
+        // Print the prompt
+        printf("%s", prompt);
+
+        // Read the user's input
+        fgets(command, MAX_PATH_LENGTH, stdin);
+
+        // Remove the newline character at the end
+        command[strcspn(command, "\n")] = '\0';
+
+        // Check for built-in commands
+        if (strcmp(command, "cd") == 0) {
+            chdir(getenv("HOME"));
+            continue;
+        } else if (strncmp(command, "cd ", 3) == 0) {
+            char *path = command + 3;
+            if (chdir(path) == -1) {
+                perror("cd");
+            }
+            continue;
+        } else if (strcmp(command, "exit") == 0) {
+            break;
+        } else if (strncmp(command, "ls", 2) == 0) {
+            char *path = command + 2;
+            while (*path == ' ') {
+                path++;
+            }
+            if (*path == '\0') {
+                // No path provided, use current directory
+                ls(".", show_hidden);
+            } else {
+                // Use the provided path
+                ls(path, show_hidden);
+            }
+        } else if (strncmp(command, "mkdir ", 6) == 0) {
+            char *path = command + 6;
+            if (*path == '\0') {
+                printf("mkdir: missing operand\n");
+            } else {
+               
